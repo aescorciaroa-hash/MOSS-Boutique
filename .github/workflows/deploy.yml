@@ -1,0 +1,48 @@
+# Cada cambio en "main" se compila y se publica en la rama "deploy".
+# Hostinger (hPanel → Git, con implementación automática) descarga la rama "deploy" en public_html.
+name: Publicar en Hostinger
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: deploy
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Compilar la tienda
+        run: npm run build
+
+      - name: Agregar la API (sin archivos de configuración local)
+        run: |
+          mkdir -p dist/api
+          cp api/index.php api/lib.php api/.htaccess api/config.example.php dist/api/
+
+      - name: Publicar en la rama deploy
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: deploy
+          publish_dir: ./dist
+          force_orphan: true
+          user_name: github-actions[bot]
+          user_email: github-actions[bot]@users.noreply.github.com
+          commit_message: Publicación automática

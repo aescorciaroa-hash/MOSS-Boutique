@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.env
+.env.*
+api/config.local.php
+moss-config.php
+*.log
+.DS_Store
+comparacion-colores.png

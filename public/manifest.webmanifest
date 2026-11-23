@@ -1,0 +1,12 @@
+{
+  "name": "MOSS Boutique",
+  "short_name": "MOSS Boutique",
+  "description": "MOSS Boutique · Tienda en línea y sistema de ventas",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F7F7F8",
+  "theme_color": "#E9E9EC",
+  "icons": [
+    { "src": "/favicon.svg?v=3", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}
