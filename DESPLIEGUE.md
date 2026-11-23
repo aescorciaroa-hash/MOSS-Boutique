@@ -58,7 +58,12 @@ El catálogo inicial queda con **stock y costo en 0**. Cárgalos desde **Inventa
 ---
 
 ## Día a día
-- Haz el cambio, súbelo a `main` y en uno o dos minutos queda publicado.
+- Haz el cambio y súbelo a `main`. En uno o dos minutos queda publicado.
+- **Si GitHub Actions no está disponible** (por ejemplo, por un bloqueo de facturación en la cuenta), publica desde tu equipo con:
+  ```
+  npm run publicar
+  ```
+  Este comando compila la tienda y la sube a la rama `deploy`. Hostinger la descarga sola igual.
 - En **Configuración → Datos y respaldo** puedes descargar una copia de seguridad completa.
 
 ## Desarrollo local
