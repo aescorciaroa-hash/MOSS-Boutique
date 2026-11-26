@@ -3613,3 +3613,9 @@ img { max-width: 100%; }
   .hero__filters .segmented { display: flex; flex-wrap: nowrap; width: 100%; gap: 2px; }
   .hero__filters .segmented button { flex: 1 1 auto; justify-content: center; padding: 0 6px; font-size: 12px; }
 }
+
+/* Con un menú lateral o una ventana abierta, la página de atrás no se mueve */
+html:has(.store__sheet), html:has(.backdrop), html:has(.shell--mobile-open) { overflow: hidden; }
+html:has(.store__sheet) body, html:has(.backdrop) body, html:has(.shell--mobile-open) body { overflow: hidden; overscroll-behavior: none; }
+.store__sheet, .store__sheet-scroll, .sidebar, .modal__body, .drawer__body { overscroll-behavior: contain; }
+.store__sheet-backdrop, .sidebar-scrim { touch-action: none; }
