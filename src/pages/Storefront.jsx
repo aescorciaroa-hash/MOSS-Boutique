@@ -1,8 +1,8 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useLocation, useNavigate } from 'react-router-dom'
 import {
-  ArrowRight, AtSign, Bell, Check, ChevronRight, EyeOff, IdCard, Lock, Mail, Save, UserRound, CheckCircle2, ClipboardList, CreditCard, LayoutGrid, LogIn, LogOut, MapPin, Menu, MessageCircle, Minus, Moon, Package, Palette, Phone, Plus,
+  ArrowRight, AtSign, Bell, Check, ChevronRight, EyeOff, IdCard, Lock, Mail, UserRound, CheckCircle2, ClipboardList, CreditCard, LayoutGrid, LogIn, LogOut, MapPin, Menu, MessageCircle, Minus, Moon, Package, Palette, Phone, Plus,
   Eye, ReceiptText, RefreshCcw, Ruler, Search, ShieldCheck, ShoppingBag, ShoppingCart, Sparkles, Store, Sun, Trash2, Truck, UserPlus, Wallet, X, Clock, XCircle,
 } from 'lucide-react'
 import { useApp, stockOf, variantLabel } from '../context/AppContext'
@@ -463,18 +463,32 @@ function ProfilePage({ user, customer, orders, onSave }) {
   const dirty = JSON.stringify(f) !== JSON.stringify(saved)
   const masked = f.doc ? `${'•'.repeat(Math.max(0, f.doc.length - 3))}${f.doc.slice(-3)}` : 'Sin registrar'
   const [saving, setSaving] = useState(false)
-  const submit = async (e) => {
-    e.preventDefault()
-    if (saving) return
-    if (f.name.trim().length < 3) return setErr('Escribe tu nombre completo.')
-    if (!/^\d{6,10}$/.test(f.doc)) return setErr('Escribe tu número de cédula (6 a 10 dígitos).')
-    if (f.phone.replace(/\D/g, '').length < 7) return setErr('Escribe un celular válido.')
-    if (f.email && !/^\S+@\S+\.\S+$/.test(f.email)) return setErr('El correo no es válido.')
-    setSaving(true)
-    const r = await onSave(f)
-    setSaving(false)
-    if (r?.error) setErr(r.error)
+  const validate = (v) => {
+    if (v.name.trim().length < 3) return 'Escribe tu nombre completo.'
+    if (!/^\d{6,10}$/.test(v.doc)) return 'Escribe tu número de cédula (6 a 10 dígitos).'
+    if (v.phone.replace(/\D/g, '').length < 7) return 'Escribe un celular válido.'
+    if (v.email && !/^\S+@\S+\.\S+$/.test(v.email)) return 'El correo no es válido.'
+    return ''
   }
+  // Guardado automático: al dejar de escribir se revisan los datos y, si están bien, se guardan solos.
+  const lastSent = useRef('')
+  const save = async (v) => {
+    const msg = validate(v)
+    if (msg) return setErr(msg)
+    const key = JSON.stringify(v)
+    if (key === lastSent.current) return
+    lastSent.current = key
+    setSaving(true)
+    const r = await onSave(v)
+    setSaving(false)
+    if (r?.error) { setErr(r.error); lastSent.current = '' }
+  }
+  useEffect(() => {
+    if (!dirty) return
+    const t = setTimeout(() => save(f), 900)
+    return () => clearTimeout(t)
+  }, [f, dirty]) // eslint-disable-line react-hooks/exhaustive-deps
+  const submit = (e) => { e.preventDefault(); if (dirty) save(f) }
   const paid = orders.filter((o) => o.status === 'completada')
   return (
     <>
@@ -531,10 +545,9 @@ function ProfilePage({ user, customer, orders, onSave }) {
           </Field>
         </div>
         {err && <div className="alert alert--danger">{err}</div>}
-        <div className="card__actions">
-          <button type="button" className="btn btn--secondary" disabled={!dirty} onClick={() => { setF(saved); setErr('') }}>Descartar</button>
-          <button type="submit" className="btn btn--primary" disabled={!dirty}><Save size={16} /> Guardar cambios</button>
-        </div>
+        <p className={`autosave ${err ? 'is-error' : dirty || saving ? 'is-saving' : 'is-ok'}`}>
+          <i /> {err ? 'Sin guardar: corrige el dato marcado arriba' : dirty || saving ? 'Guardando…' : 'Tus cambios se guardan automáticamente'}
+        </p>
       </form>
     </>
   )
@@ -899,9 +912,7 @@ export default function Storefront() {
           <OrdersPage orders={orders} settings={settings} productMap={productMap} onInvoice={setInvoice} onShop={() => goSection('catalogo')} onInvoices={() => goSection('facturas')} />
         ) : view === 'perfil' ? (
           <ProfilePage user={user} customer={customer} orders={orders} onSave={async (data) => {
-            const r = await updateMyProfile(data)
-            if (r?.ok) toast('Perfil actualizado', 'success', 'Tus datos y tu cédula quedaron guardados')
-            return r
+            return updateMyProfile(data)
           }} />
         ) : view === 'facturas' ? (
           <InvoicesPage orders={orders} settings={settings} onOpen={setInvoice} onShop={() => goSection('catalogo')} onOrders={() => goSection('pedidos')} />

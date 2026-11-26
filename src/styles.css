@@ -3712,3 +3712,11 @@ html:has(.store__sheet) body, html:has(.backdrop) body, html:has(.shell--mobile-
   .topbar-strip .status-pill--strip > div { flex: 1; min-width: 0; }
   .topbar-strip .status-pill--strip strong, .topbar-strip .status-pill--strip small { overflow: hidden; text-overflow: ellipsis; }
 }
+
+/* Aviso de guardado automático (Mi perfil) */
+.autosave { display: flex; align-items: center; gap: 8px; margin: 6px 0 0; font-size: 13px; font-weight: 600; color: var(--muted); }
+.autosave i { width: 8px; height: 8px; border-radius: 50%; background: currentColor; flex: none; }
+.autosave.is-ok { color: var(--success, #059669); }
+.autosave.is-saving { color: var(--muted); }
+.autosave.is-saving i { animation: pulse-dot 1.2s ease-in-out infinite; }
+.autosave.is-error { color: #dc2626; }
