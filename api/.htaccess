@@ -1,0 +1,5 @@
+# Solo se puede llamar a index.php; los demás archivos PHP de la API no son accesibles desde el navegador.
+Options -Indexes
+<FilesMatch "^(lib|config\.local|config\.example)\.php$">
+  Require all denied
+</FilesMatch>
