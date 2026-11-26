@@ -878,12 +878,10 @@ export default function Storefront() {
               {isClient ? (
                 <>
                   <div className="store__sheet-user">
-                    <span className="user-chip__avatar"><Avatar name={user.name} size={42} /><i className="user-chip__online" /></span>
+                    <span className="user-chip__avatar"><Avatar name={user.name} size={40} /><i className="user-chip__online" /></span>
                     <div><strong>{user.name}</strong><span>Cliente · en línea</span></div>
+                    <button type="button" className="store__sheet-logout-btn" onClick={logout}><LogOut size={16} /> Salir</button>
                   </div>
-                  <button type="button" className="store__sheet-item store__sheet-logout" onClick={logout}>
-                    <span className="store__sheet-icon ic--red"><LogOut size={18} /></span>Cerrar sesión
-                  </button>
                 </>
               ) : (
                 <>

@@ -3627,3 +3627,20 @@ html:has(.store__sheet) body, html:has(.backdrop) body, html:has(.shell--mobile-
 @media (hover: none) {
   .table--hover tbody tr:hover td, .row-click:hover td { background: transparent; }
 }
+
+/* Menú lateral de la tienda (celular): todo cabe sin cortarse */
+@media (max-width: 860px) {
+  .store__sheet-head { padding: 14px 14px 12px 16px !important; }
+  .store__sheet-scroll { padding: 8px 10px !important; gap: 2px !important; }
+  .store__sheet-label { padding: 10px 12px 4px !important; }
+  .store__sheet-label:first-child { padding-top: 2px !important; }
+  .store__sheet-item { min-height: 46px !important; padding: 4px 10px !important; }
+  .store__sheet-icon { width: 34px !important; height: 34px !important; border-radius: 11px !important; }
+  .store__sheet-foot { padding: 10px 12px calc(12px + env(safe-area-inset-bottom)) !important; }
+  .store__sheet-user { padding: 4px !important; }
+  .store__sheet-user > div { flex: 1; }
+  .store__sheet-user strong { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .store__sheet-logout-btn { flex: none; display: inline-flex; align-items: center; gap: 6px; height: 40px; padding: 0 14px; border-radius: 12px; font-size: 14px; font-weight: 700;
+    color: #dc2626; background: #fef2f2; border: 1.5px solid rgba(220, 38, 38, 0.25); }
+  :root[data-theme='dark'] .store__sheet-logout-btn { color: #f87171; background: rgba(239, 68, 68, 0.12); border-color: rgba(248, 113, 113, 0.3); }
+}
