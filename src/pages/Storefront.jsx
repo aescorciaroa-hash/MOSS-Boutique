@@ -494,7 +494,7 @@ function ProfilePage({ user, customer, orders, onSave }) {
             <div className="hero__tile"><IdCard size={16} /><strong>{saved.doc ? `•••${saved.doc.slice(-3)}` : '—'}</strong><span>Cédula</span></div>
             <div className="hero__tile"><ClipboardList size={16} /><strong>{orders.length}</strong><span>Pedidos</span></div>
             <div className="hero__tile"><ReceiptText size={16} /><strong>{paid.length}</strong><span>Facturas pagadas</span></div>
-            <div className="hero__tile"><UserRound size={16} /><strong>@{user.username}</strong><span>Usuario</span></div>
+            <div className="hero__tile"><UserRound size={16} /><strong>{user.username}</strong><span>Usuario</span></div>
           </div>
         </div>
       </section>

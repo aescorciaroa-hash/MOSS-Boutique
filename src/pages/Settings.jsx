@@ -31,7 +31,7 @@ function UserForm({ initial, onClose, onSave, users }) {
     >
       <div className="form-grid form-grid--1">
         <Field label="Nombre" error={err.name}><input className="input" autoFocus value={f.name} onChange={set('name')} /></Field>
-        <Field label="Usuario" error={err.username}><input className="input" value={f.username} onChange={set('username')} autoComplete="off" /></Field>
+        <Field label="Usuario" error={err.username}><input className="input" value={f.username} onChange={set('username')} autoComplete="off" autoCapitalize="none" autoCorrect="off" spellCheck={false} /></Field>
         <Field label={f.id ? 'Nueva contraseña' : 'Contraseña'} error={err.password} hint={f.id ? 'Déjala vacía para conservar la actual' : 'Mínimo 8 caracteres'}><input className="input" type="password" value={f.password} onChange={set('password')} autoComplete="new-password" /></Field>
         <Field label="Rol" hint={f.role === 'admin' ? 'Acceso total: reportes, configuración, edición de productos y anulaciones.' : 'Ve la tienda en línea: catálogo, precios, disponibilidad y pedidos por WhatsApp. No accede al sistema de ventas.'}>
           <Select className="input" value={f.role} onChange={set('role')}>
@@ -241,7 +241,7 @@ export default function Settings() {
               <tbody>
                 {users.map((u) => (
                   <tr key={u.id}>
-                    <td><div className="cell-user"><Avatar name={u.name} size={32} /><div><strong>{u.name}{u.id === user.id && <span className="text-muted"> (tú)</span>}</strong><span className="text-muted small">@{u.username}</span></div></div></td>
+                    <td><div className="cell-user"><Avatar name={u.name} size={32} /><div><strong>{u.name}{u.id === user.id && <span className="text-muted"> (tú)</span>}</strong><span className="text-muted small">{u.username}</span></div></div></td>
                     <td>{u.role === 'admin' ? <Badge tone="accent"><KeyRound size={12} /> Administrador</Badge> : <Badge tone="info">Cliente</Badge>}</td>
                     <td>{u.active ? <Badge tone="success" dot>Activo</Badge> : <Badge>Inactivo</Badge>}</td>
                     <td className="actions">

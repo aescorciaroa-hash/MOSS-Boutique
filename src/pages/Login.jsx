@@ -27,7 +27,7 @@ export default function Login({ mode = 'login' }) {
       if (password.length < 8) return setError('La contraseña debe tener al menos 8 caracteres.')
       if (password !== form.password2) return setError('Las contraseñas no coinciden.')
       setSending(true)
-      const r = await setupAdmin({ name: form.name, username, password })
+      const r = await setupAdmin({ name: form.name, username: username.trim().toLowerCase(), password })
       setSending(false)
       if (r.error) return setError(r.error)
       toast('¡Sistema listo!', 'success', 'Tu cuenta de administrador fue creada')
@@ -37,7 +37,7 @@ export default function Login({ mode = 'login' }) {
     if (!isRegister) {
       if (!username.trim() || !password) return setError('Escribe tu usuario y contraseña.')
       setSending(true)
-      const r = await login(username, password)
+      const r = await login(username.trim().toLowerCase(), password)
       setSending(false)
       if (r.error) setError(r.error)
       else navigate('/', { replace: true })
@@ -50,7 +50,7 @@ export default function Login({ mode = 'login' }) {
     if (password.length < 8) return setError('La contraseña debe tener al menos 8 caracteres.')
     if (password !== form.password2) return setError('Las contraseñas no coinciden.')
     setSending(true)
-    const r = await register({ name: form.name, doc: form.doc, phone: form.phone, email: form.email, city: form.city, username, password })
+    const r = await register({ name: form.name, doc: form.doc, phone: form.phone, email: form.email, city: form.city, username: username.trim().toLowerCase(), password })
     setSending(false)
     if (r.error) return setError(r.error)
     toast('¡Cuenta creada!', 'success', `Bienvenida, ${form.name.split(' ')[0]}. Ya puedes comprar en la tienda.`)
@@ -148,7 +148,7 @@ export default function Login({ mode = 'login' }) {
             <span className="field__label">Usuario</span>
             <div className="input-icon">
               <User size={17} />
-              <input className="input" value={username} onChange={(e) => { setUsername(e.target.value); setError('') }} autoFocus={!isRegister && !isSetup} autoComplete="username" placeholder="usuario" />
+              <input className="input" value={username} onChange={(e) => { setUsername(e.target.value); setError('') }} autoFocus={!isRegister && !isSetup} autoComplete="username" autoCapitalize="none" autoCorrect="off" spellCheck={false} placeholder="usuario" />
             </div>
           </label>
           {isRegister || isSetup ? (

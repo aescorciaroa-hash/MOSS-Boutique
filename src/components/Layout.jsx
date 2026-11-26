@@ -249,7 +249,7 @@ export default function Layout() {
                 <div className="popover popover--menu">
                   <div className="popover__user">
                     <strong>{user.name}</strong>
-                    <span className="text-muted">@{user.username}</span>
+                    <span className="text-muted">{user.username}</span>
                   </div>
                   {isAdmin && (
                     <button onClick={() => navigate('/configuracion')}><Settings size={16} /> Configuración</button>
