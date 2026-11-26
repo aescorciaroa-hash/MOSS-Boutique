@@ -72,6 +72,7 @@ export default function Login({ mode = 'login' }) {
     <div className="login">
       <section className="login__visual">
         <div className="login__visual-copy">
+          <span className="login__visual-icon" aria-hidden="true">{isRegister ? <UserPlus size={24} /> : <ShoppingBag size={24} />}</span>
           <span className="hero__eyebrow"><ShoppingBag size={14} /> {settings.storeName} · Tienda en línea</span>
           <h2>{isSetup ? 'Configura tu tienda en un minuto.' : isRegister ? 'Crea tu cuenta y compra en minutos.' : 'Tu boutique favorita, a un clic.'}</h2>
           <p>{isSetup ? 'Crea la cuenta de administrador. Con ella manejas el inventario, los pedidos, los clientes y los reportes.' : isRegister ? 'Guarda tus datos de envío, arma tu carrito y sigue el estado de tus pedidos.' : `Entra para comprar en ${settings.storeName} y revisar tus pedidos.`}</p>
