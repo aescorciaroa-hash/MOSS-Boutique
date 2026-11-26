@@ -56,8 +56,8 @@ export default function App() {
         // Visitantes: primero la tienda; desde allí entran o se registran.
         <Routes>
           <Route index element={<Storefront key={user?.id || 'visitante'} />} />
-          <Route path="login" element={<Login />} />
-          <Route path="registro" element={<Login mode="register" />} />
+          <Route path="login" element={<Login key="login" />} />
+          <Route path="registro" element={<Login key="registro" mode="register" />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       ) : user.role === 'cliente' ? (

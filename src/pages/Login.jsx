@@ -149,7 +149,7 @@ export default function Login({ mode = 'login' }) {
             <span className="field__label">Usuario</span>
             <div className="input-icon">
               <User size={17} />
-              <input className="input" value={username} onChange={(e) => { setUsername(e.target.value); setError('') }} autoFocus={!isRegister && !isSetup} autoComplete="username" autoCapitalize="none" autoCorrect="off" spellCheck={false} placeholder="usuario" />
+              <input className="input" value={username} onChange={(e) => { setUsername(e.target.value); setError('') }} autoFocus={!isRegister && !isSetup} autoComplete={isRegister || isSetup ? "off" : "username"} autoCapitalize="none" autoCorrect="off" spellCheck={false} placeholder="usuario" />
             </div>
           </label>
           {isRegister || isSetup ? (
