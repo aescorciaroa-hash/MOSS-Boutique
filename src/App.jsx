@@ -41,7 +41,13 @@ export default function App() {
 
   return (
     <>
-      {status === 'setup' ? (
+      {status === 'loading' ? (
+        // Mientras llega la primera respuesta se muestra la tienda sin cambiar la dirección,
+        // así quien abre /#/ventas con sesión iniciada llega a Ventas y no a Inicio.
+        <Routes>
+          <Route path="*" element={<Storefront key="cargando" />} />
+        </Routes>
+      ) : status === 'setup' ? (
         // Primer ingreso: no hay administrador todavía, se crea antes de cualquier otra cosa.
         <Routes>
           <Route path="*" element={<Login mode="setup" />} />

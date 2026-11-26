@@ -3599,3 +3599,17 @@ img { max-width: 100%; }
   /* Avisos abajo en el celular: así no tapan la barra ni el carrito */
   .toasts { top: auto; bottom: calc(16px + env(safe-area-inset-bottom)); left: 12px; right: 12px; align-items: stretch; }
 }
+
+/* Tarjetas oscuras de resumen: nunca más anchas que la pantalla en el celular */
+.hero > * { min-width: 0; }
+@media (max-width: 1320px) { .hero--report { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 860px) {
+  .hero__visual-head { flex-wrap: wrap; row-gap: 2px; }
+  .hero__rank li { padding: 10px 12px; gap: 10px; }
+}
+
+/* Selector de periodo (Ventas / Reportes) en celular: todas las opciones en una sola fila */
+@media (max-width: 860px) {
+  .hero__filters .segmented { display: flex; flex-wrap: nowrap; width: 100%; gap: 2px; }
+  .hero__filters .segmented button { flex: 1 1 auto; justify-content: center; padding: 0 6px; font-size: 12px; }
+}

@@ -7,7 +7,7 @@ import {
 } from 'lucide-react'
 import { useApp, stockOf, variantLabel } from '../context/AppContext'
 import { CATEGORIES, COLORS, PAYMENT_METHODS } from '../lib/seed'
-import { compactMoney, fmtDate, fmtDateTime, fmtTime, money, normalize } from '../lib/format'
+import { fmtDate, fmtDateTime, fmtTime, money, normalize } from '../lib/format'
 import { Avatar, Badge, Drawer, Empty, Field, Modal, Pager, Segmented, Stat, Thumb, usePaged } from '../components/ui'
 import ReceiptModal, { invoiceNo } from '../components/Receipt'
 
@@ -574,7 +574,6 @@ function InvoicesPage({ orders, settings, onOpen, onShop, onOrders }) {
           <div className="hero__visual-head"><strong>Resumen de compras</strong></div>
           <div className="hero__tiles hero__tiles--grid">
             <div className="hero__tile"><ReceiptText size={16} /><strong>{orders.length}</strong><span>Facturas</span></div>
-            <div className="hero__tile"><Wallet size={16} /><strong>{compactMoney(paid.length ? paidTotal / paid.length : 0)}</strong><span>Compra promedio</span></div>
             <div className="hero__tile"><Clock size={16} /><strong>{pending}</strong><span>Por confirmar</span></div>
             <div className="hero__tile"><Package size={16} /><strong>{units}</strong><span>Prendas compradas</span></div>
           </div>
@@ -608,7 +607,7 @@ function InvoicesPage({ orders, settings, onOpen, onShop, onOrders }) {
                 {pg.rows.map((o) => {
                   const [tone, label] = ORDER_STATUS[o.status] || ORDER_STATUS.completada
                   return (
-                    <tr key={o.id} onClick={() => onOpen(o)}>
+                    <tr key={o.id}>
                       <td className="mono">{invoiceNo(settings, o.number)}</td>
                       <td><div>{fmtDate(o.date, { day: '2-digit', month: 'short', year: 'numeric' })}</div><span className="text-muted small">{fmtTime(o.date)}</span></td>
                       <td className="num">{o.items.reduce((a, i) => a + i.qty, 0)}</td>
@@ -616,7 +615,7 @@ function InvoicesPage({ orders, settings, onOpen, onShop, onOrders }) {
                       <td>{/Recoge en tienda/i.test(o.note || '') ? 'Recoger en tienda' : 'Domicilio'}</td>
                       <td className={`num strong ${o.status === 'anulada' ? 'strike' : ''}`}>{money(o.total)}</td>
                       <td><Badge tone={tone} dot>{label}</Badge></td>
-                      <td className="num"><button type="button" className="btn btn--secondary btn--sm" onClick={(e) => { e.stopPropagation(); onOpen(o) }}><Eye size={15} /> Ver factura</button></td>
+                      <td className="num"><button type="button" className="btn btn--secondary btn--sm" onClick={() => onOpen(o)}><Eye size={15} /> Ver factura</button></td>
                     </tr>
                   )
                 })}
@@ -656,12 +655,12 @@ export default function Storefront() {
     try { localStorage.setItem(cartKey, JSON.stringify(cart)) } catch { /* noop */ }
   }, [cart, cartKey])
 
-  const active = useMemo(() => products.filter((p) => p.active), [products])
+  // En la tienda solo se muestran prendas activas con unidades disponibles (las agotadas se ocultan).
+  const active = useMemo(() => products.filter((p) => p.active && stockOf(p) > 0), [products])
   const list = useMemo(() => {
     const n = normalize(q)
     return active
       .filter((p) => (cat === 'all' || p.category === cat) && (!n || normalize(`${p.sku} ${p.type} ${p.name}`).includes(n)))
-      .sort((a, b) => (stockOf(b) > 0) - (stockOf(a) > 0))
   }, [active, q, cat])
 
   const inCart = useMemo(() => Object.fromEntries(cart.map((l) => [l.variantId, l.qty])), [cart])
@@ -670,9 +669,7 @@ export default function Storefront() {
   const orders = useMemo(() => (customer ? sales.filter((s) => s.customerId === customer.id) : []), [sales, customer])
   const pendingOrders = orders.filter((o) => o.status === 'pendiente').length
 
-  const inStock = active.filter((p) => stockOf(p) > 0).length
-  const colorCount = new Set(active.flatMap((p) => p.variants.map((v) => v.color))).size
-  const catCount = new Set(active.map((p) => p.category)).size
+  const inStock = active.length
   const [brandFirst, ...brandRest] = (settings.storeName || 'MOSS').split(' ')
   const firstName = (user?.name || '').split(' ')[0]
   const spent = orders.filter((o) => o.status === 'completada').reduce((a, o) => a + o.total, 0)
@@ -937,12 +934,6 @@ export default function Storefront() {
           </div>
           <div className="hero__visual">
             <div className="hero__photo"><img src="/img/brand/hero-compras.jpg" alt="Clienta con bolsas de compra" /></div>
-            <div className="hero__tiles">
-              <div className="hero__tile"><Package size={16} /><strong>{active.length}</strong><span>Productos</span></div>
-              <div className="hero__tile"><LayoutGrid size={16} /><strong>{catCount}</strong><span>Categorías</span></div>
-              <div className="hero__tile"><Palette size={16} /><strong>{colorCount}</strong><span>Colores</span></div>
-              <div className="hero__tile"><Truck size={16} /><strong>24 h</strong><span>Despacho</span></div>
-            </div>
           </div>
         </section>
 
