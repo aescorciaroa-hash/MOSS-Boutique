@@ -75,7 +75,7 @@ export default function Dashboard() {
         </div>
       </section>
 
-      <section className="goals">
+      {settings.goalsEnabled !== false && <section className="goals">
         {[
           ['Hoy', data.today.revenue, settings.goalDay],
           ['7 días', data.week.revenue, settings.goalWeek],
@@ -96,7 +96,7 @@ export default function Dashboard() {
             </div>
           )
         })}
-      </section>
+      </section>}
 
       <section className="stats">
         <Stat tone="hero" label="Ventas de hoy" value={money(data.today.revenue)} icon={DollarSign} delta={growth(data.today.revenue, data.yesterday.revenue)} deltaLabel="vs. ayer" />

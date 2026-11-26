@@ -132,11 +132,17 @@ export default function Settings() {
             </Field>
           </div>
 
-          <div className="form-section">
-            <h4>Metas de ventas</h4>
-            <p>Se muestran como indicadores de progreso en el inicio</p>
+          <div className="form-section form-section--toggle">
+            <div>
+              <h4>Metas de ventas</h4>
+              <p>{f.goalsEnabled !== false ? 'Se muestran como indicadores de progreso en el inicio' : 'Desactivadas: no se muestran en el inicio'}</p>
+            </div>
+            <label className="switch">
+              <input type="checkbox" checked={f.goalsEnabled !== false} onChange={(e) => setF((x) => ({ ...x, goalsEnabled: e.target.checked }))} />
+              <span className="switch__track" /> {f.goalsEnabled !== false ? 'Activadas' : 'Desactivadas'}
+            </label>
           </div>
-          <div className="form-grid">
+          {f.goalsEnabled !== false && <div className="form-grid">
             <Field label="Meta diaria" hint="Facturado de hoy">
               <MoneyInput value={f.goalDay ?? ''} onChange={(e) => setF((x) => ({ ...x, goalDay: Number(e.target.value) || 0 }))} />
             </Field>
@@ -146,7 +152,7 @@ export default function Settings() {
             <Field label="Meta mensual" hint="Mes en curso">
               <MoneyInput value={f.goalMonth ?? ''} onChange={(e) => setF((x) => ({ ...x, goalMonth: Number(e.target.value) || 0 }))} />
             </Field>
-          </div>
+          </div>}
 
           <div className="form-section">
             <h4>Factura de venta</h4>

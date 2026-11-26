@@ -3682,3 +3682,8 @@ html:has(.store__sheet) body, html:has(.backdrop) body, html:has(.shell--mobile-
   .login__showcase .hero__photo img { object-position: center 18%; }
   .login__showcase::after { background: linear-gradient(180deg, rgba(10, 10, 14, 0.28), rgba(10, 10, 14, 0.62)) !important; }
 }
+
+/* Encabezado de sección con interruptor (p. ej. Metas de ventas) */
+.form-section--toggle { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
+.form-section--toggle > div { min-width: 0; }
+.form-section--toggle .switch { flex: none; font-weight: 700; }

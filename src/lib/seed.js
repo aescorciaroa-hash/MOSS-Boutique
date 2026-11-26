@@ -158,6 +158,7 @@ export const DEFAULT_SETTINGS = {
   showCustomerDoc: true,
   showChannel: true,
   showPrintedAt: true,
+  goalsEnabled: true,
   goalDay: 500000,
   goalWeek: 3500000,
   goalMonth: 15000000,
