@@ -145,8 +145,9 @@ kbd {
 }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 ::selection { background: var(--accent-soft); }
-::-webkit-scrollbar { width: 10px; height: 10px; }
-::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 99px; border: 3px solid transparent; background-clip: padding-box; }
+/* Barras de desplazamiento ocultas en todo el sistema (el scroll sigue funcionando) */
+* { scrollbar-width: none; -ms-overflow-style: none; }
+::-webkit-scrollbar { display: none; width: 0; height: 0; }
 
 .text-muted { color: var(--muted); }
 .text-secondary { color: var(--text-2); }
