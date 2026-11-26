@@ -1,5 +1,5 @@
 import { Navigate, Route, Routes } from 'react-router-dom'
-import { RefreshCcw, ShoppingBag, WifiOff } from 'lucide-react'
+import { RefreshCcw, WifiOff } from 'lucide-react'
 import { useApp } from './context/AppContext'
 import Layout from './components/Layout'
 import { Toasts } from './components/ui'
@@ -17,14 +17,14 @@ function AdminOnly({ children }) {
   return isAdmin ? children : <Navigate to="/" replace />
 }
 
-function Splash({ offline, message, onRetry }) {
+function Offline({ message, onRetry }) {
   return (
     <div className="splash">
       <div className="splash__card">
-        <span className={`splash__icon ${offline ? 'ic--red' : ''}`}>{offline ? <WifiOff size={26} /> : <ShoppingBag size={26} strokeWidth={2.2} />}</span>
-        <strong>{offline ? 'No pudimos conectar con la tienda' : 'MOSS Boutique'}</strong>
-        <span>{offline ? message : 'Cargando…'}</span>
-        {offline ? <button className="btn btn--primary" onClick={onRetry}><RefreshCcw size={16} /> Reintentar</button> : <i className="splash__bar" />}
+        <span className="splash__icon ic--red"><WifiOff size={26} /></span>
+        <strong>No pudimos conectar con la tienda</strong>
+        <span>{message}</span>
+        <button className="btn btn--primary" onClick={onRetry}><RefreshCcw size={16} /> Reintentar</button>
       </div>
     </div>
   )
@@ -33,8 +33,10 @@ function Splash({ offline, message, onRetry }) {
 export default function App() {
   const { user, status, loadError, refresh } = useApp()
 
-  if (status === 'loading' || status === 'offline') {
-    return <Splash offline={status === 'offline'} message={loadError} onRetry={refresh} />
+  // Solo se bloquea la pantalla si no hay conexión y nunca se cargó nada.
+  // Mientras carga, la tienda se muestra de una vez (con el catálogo en esqueleto).
+  if (status === 'offline') {
+    return <Offline message={loadError} onRetry={refresh} />
   }
 
   return (
@@ -47,14 +49,14 @@ export default function App() {
       ) : !user ? (
         // Visitantes: primero la tienda; desde allí entran o se registran.
         <Routes>
-          <Route index element={<Storefront />} />
+          <Route index element={<Storefront key={user?.id || 'visitante'} />} />
           <Route path="login" element={<Login />} />
           <Route path="registro" element={<Login mode="register" />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       ) : user.role === 'cliente' ? (
         <Routes>
-          <Route path="*" element={<Storefront />} />
+          <Route path="*" element={<Storefront key={user?.id || 'visitante'} />} />
         </Routes>
       ) : (
         <Routes>

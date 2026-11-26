@@ -639,7 +639,8 @@ function InvoicesPage({ orders, settings, onOpen, onShop, onOrders }) {
 
 // ---------------- Página ----------------
 export default function Storefront() {
-  const { user, logout, products, productMap, settings, theme, setTheme, sales, customerMap, placeOrder, updateMyProfile, toast } = useApp()
+  const { user, logout, products, productMap, settings, theme, setTheme, sales, customerMap, placeOrder, updateMyProfile, toast, status } = useApp()
+  const loadingCatalog = status === 'loading' && !products.length
   const navigate = useNavigate()
   const isClient = user?.role === 'cliente'
   const cartKey = user ? `moss.cart.${user.id}` : null
@@ -969,7 +970,7 @@ export default function Storefront() {
         <section className="card store__catalog" id="catalogo">
           <div className="card__head">
             <div className="card__title-icon"><ShoppingBag size={20} /></div>
-            <div><h3>Catálogo</h3><p>{list.length} {list.length === 1 ? 'producto' : 'productos'} · toca uno para ver colores y tallas</p></div>
+            <div><h3>Catálogo</h3><p>{loadingCatalog ? 'Cargando prendas…' : `${list.length} ${list.length === 1 ? 'producto' : 'productos'} · toca uno para ver colores y tallas`}</p></div>
           </div>
           <div className="store__filters store__filters--row">
             <div className="input-icon toolbar__search">
@@ -983,7 +984,16 @@ export default function Storefront() {
               ))}
             </div>
           </div>
-          {list.length ? (
+          {loadingCatalog ? (
+            <div className="store__grid" aria-busy="true">
+              {Array.from({ length: 8 }, (_, i) => (
+                <div key={i} className="pcard pcard--skeleton">
+                  <div className="pcard__img" />
+                  <div className="pcard__body"><i /><i /></div>
+                </div>
+              ))}
+            </div>
+          ) : list.length ? (
             <div className="store__grid">
               {list.map((p) => {
                 const st = stockOf(p)

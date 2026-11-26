@@ -164,8 +164,8 @@ export const DEFAULT_SETTINGS = {
 }
 
 export const ACCENTS = [
-  { id: 'nude', name: 'Azul Chronos', color: '#3B82F6' },
   { id: 'onyx', name: 'Negro ónix', color: '#18181b' },
+  { id: 'nude', name: 'Azul Chronos', color: '#3B82F6' },
   { id: 'navy', name: 'Azul marino', color: '#1e40af' },
   { id: 'slate', name: 'Pizarra', color: '#475569' },
   { id: 'emerald', name: 'Esmeralda', color: '#047857' },

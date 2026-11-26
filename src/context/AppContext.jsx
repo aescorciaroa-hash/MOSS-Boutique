@@ -6,7 +6,10 @@ import { uid } from '../lib/format'
 // preferencias visuales (tema y color) y el carrito de cada cliente.
 const API_URL = import.meta.env.VITE_API_URL || 'api/index.php'
 const THEME_KEY = 'moss.pos.theme'
-const ACCENT_KEY = 'moss.pos.accent.v3'
+const ACCENT_KEY = 'moss.pos.accent.v4' // v4: Negro ónix pasa a ser el color principal
+// Copia local de lo público (catálogo, ajustes y sesión) para pintar la tienda al instante
+// mientras el servidor responde. Ventas, clientes y usuarios nunca se guardan en el navegador.
+const CACHE_KEY = 'moss.cache.v1'
 const EMPTY = { products: [], customers: [], sales: [], movements: [], users: [], settings: DEFAULT_SETTINGS }
 
 const AppContext = createContext(null)
@@ -52,24 +55,42 @@ async function call(action, payload = {}) {
   return data
 }
 
+function loadCache() {
+  const c = loadPref(CACHE_KEY, null)
+  if (!c || !Array.isArray(c.products)) return null
+  return c
+}
+
+function saveCache(st) {
+  try {
+    const u = st.user ? { id: st.user.id, name: st.user.name, username: st.user.username, role: st.user.role } : null
+    localStorage.setItem(CACHE_KEY, JSON.stringify({ needsSetup: !!st.needsSetup, user: u, settings: st.settings || {}, products: st.products || [] }))
+  } catch { /* sin espacio o modo privado: se ignora */ }
+}
+
 export function AppProvider({ children }) {
-  const [db, setDb] = useState(EMPTY)
-  const [user, setUser] = useState(null)
-  const [status, setStatus] = useState('loading') // loading | ready | setup | offline
+  const [cache] = useState(loadCache)
+  const [db, setDb] = useState(() => (cache ? { ...EMPTY, products: cache.products, settings: { ...DEFAULT_SETTINGS, ...cache.settings } } : EMPTY))
+  const [user, setUser] = useState(() => cache?.user || null)
+  // loading | ready | setup | offline — con copia local se arranca directamente en 'ready'
+  const [status, setStatus] = useState(() => (cache ? (cache.needsSetup ? 'setup' : 'ready') : 'loading'))
   const [loadError, setLoadError] = useState('')
   const [theme, setTheme] = useState(() => loadPref(THEME_KEY, 'light'))
   const [accent, setAccent] = useState(() => {
-    const a = loadPref(ACCENT_KEY, 'nude')
-    return ['nude', 'onyx', 'navy', 'slate', 'emerald', 'wine', 'indigo'].includes(a) ? a : 'nude'
+    const a = loadPref(ACCENT_KEY, 'onyx')
+    return ['nude', 'onyx', 'navy', 'slate', 'emerald', 'wine', 'indigo'].includes(a) ? a : 'onyx'
   })
   const [toasts, setToasts] = useState([])
   const dbRef = useRef(db)
   dbRef.current = db
   const busy = useRef(0)
-  const loaded = useRef(false)
+  const loaded = useRef(!!cache)
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme
+    // La barra del navegador en el celular toma el mismo color de fondo de la página (sin franja azul).
+    const bg = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim()
+    if (bg) document.querySelector('meta[name="theme-color"]')?.setAttribute('content', bg)
     try { localStorage.setItem(THEME_KEY, JSON.stringify(theme)) } catch { /* noop */ }
   }, [theme])
   useEffect(() => {
@@ -100,6 +121,7 @@ export function AppProvider({ children }) {
     setDb(next)
     setUser(st.user || null)
     setStatus(st.needsSetup ? 'setup' : 'ready')
+    saveCache(st)
   }, [])
 
   const refresh = useCallback(async () => {
