@@ -82,7 +82,7 @@ export default function Login({ mode = 'login' }) {
           </div>
         </div>
         <div className="login__showcase">
-          <div className="hero__photo"><img src="/img/brand/login-perchero.jpg" alt="Perchero con ropa de colores" /></div>
+          <div className="hero__photo"><img src="/img/brand/ingreso-color.jpg" alt="Modelo con vestido estampado de colores" /></div>
           <div className="hero__tiles">
             <div className="hero__tile"><ShoppingCart size={16} /><strong>Carrito</strong><span>Compra fácil</span></div>
             <div className="hero__tile"><Truck size={16} /><strong>Envíos</strong><span>A domicilio</span></div>

@@ -65,7 +65,7 @@ export default function Dashboard() {
           </div>
         </div>
         <div className="hero__visual">
-          <div className="hero__photo"><img src="/img/brand/hero-compras.jpg" alt="Clienta con bolsas de compra" /></div>
+          <div className="hero__photo"><img src="/img/brand/portada-rojo.jpg" alt="Modelo con conjunto rojo frente al cielo azul" /></div>
           <div className="hero__tiles">
             <div className="hero__tile"><Receipt size={16} /><strong>{data.today.count}</strong><span>Ventas hoy</span></div>
             <div className="hero__tile"><ShoppingBag size={16} /><strong>{data.today.units}</strong><span>Unidades hoy</span></div>

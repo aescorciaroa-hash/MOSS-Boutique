@@ -931,7 +931,7 @@ export default function Storefront() {
             </div>
           </div>
           <div className="hero__visual">
-            <div className="hero__photo"><img src="/img/brand/hero-compras.jpg" alt="Clienta con bolsas de compra" /></div>
+            <div className="hero__photo"><img src="/img/brand/portada-rojo.jpg" alt="Modelo con conjunto rojo frente al cielo azul" /></div>
           </div>
         </section>
 
