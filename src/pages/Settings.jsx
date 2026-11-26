@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Database, Download, Hash, KeyRound, Palette, Pencil, Plus, Printer, Receipt, Settings as SettingsIcon, Store, Trash2, Upload, UserCog } from 'lucide-react'
 import { useApp } from '../context/AppContext'
 import { downloadBlob } from '../lib/format'
@@ -64,7 +64,20 @@ export default function Settings() {
   const [confirm, setConfirm] = useState(null)
   const fileRef = useRef(null)
   const set = (k) => (e) => setF((x) => ({ ...x, [k]: e.target.value }))
-  const dirty = JSON.stringify(f) !== JSON.stringify({ ...settings, nextSaleNumber: f.nextSaleNumber })
+  // Comparación sin importar el orden de los campos (el servidor puede devolverlos en otro orden)
+  const same = (a, b) => Object.keys({ ...a, ...b }).every((k) => JSON.stringify(a[k]) === JSON.stringify(b[k]))
+  const dirty = !same(f, { ...settings, nextSaleNumber: f.nextSaleNumber })
+
+  // Guardado automático: cada cambio se guarda solo, un momento después de dejar de escribir.
+  const lastSent = useRef('')
+  useEffect(() => {
+    if (!dirty) return
+    const payload = { ...f, nextSaleNumber: settings.nextSaleNumber }
+    const key = JSON.stringify(payload)
+    if (key === lastSent.current) return // ya se envió; evita reenviar lo mismo
+    const t = setTimeout(() => { lastSent.current = key; saveSettings(payload) }, 700)
+    return () => clearTimeout(t)
+  }, [f, dirty, settings.nextSaleNumber, saveSettings])
 
   const previewSale = sales[0] || {
     number: settings.nextSaleNumber,
@@ -82,13 +95,10 @@ export default function Settings() {
           <h1 className="hero__amount hero__amount--name">{settings.storeName}</h1>
           <p>Datos del negocio, comprobantes, metas, usuarios y respaldo de información.</p>
           <div className="hero__pills">
-            <span className={`hero__pill ${dirty ? 'hero__pill--warn' : 'hero__pill--ok'}`}><i /> {dirty ? 'Cambios sin guardar' : 'Todo guardado'}</span>
+            <span className={`hero__pill ${dirty ? 'hero__pill--warn' : 'hero__pill--ok'}`}><i /> {dirty ? 'Guardando…' : 'Guardado automático'}</span>
             <span className="hero__pill"><Printer size={14} /> Papel {settings.paperWidth || '80'} mm</span>
           </div>
           <div className="hero__actions">
-            <button className="btn btn--primary btn--lg" disabled={!dirty} onClick={() => { saveSettings({ ...f, nextSaleNumber: settings.nextSaleNumber }); toast('Configuración guardada', 'success', 'Los cambios ya están activos') }}>
-              Guardar cambios
-            </button>
             <button className="btn btn--glass btn--lg" onClick={download}><Download size={18} /> Descargar respaldo</button>
           </div>
         </div>
@@ -204,10 +214,6 @@ export default function Settings() {
                 </label>
               ))}
             </div>
-          </div>
-          <div className="card__actions">
-            <button className="btn btn--secondary" disabled={!dirty} onClick={() => setF(settings)}>Descartar</button>
-            <button className="btn btn--primary" disabled={!dirty} onClick={() => { saveSettings({ ...f, nextSaleNumber: settings.nextSaleNumber }); toast('Configuración guardada', 'success', 'Los cambios ya están activos') }}>Guardar cambios</button>
           </div>
         </section>
 

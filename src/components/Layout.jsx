@@ -5,7 +5,7 @@ import {
   AlertTriangle, BarChart3, Bell, ChevronRight, ChevronsLeft, Clock, PackageX, X, LayoutDashboard, LogOut, Menu, Moon, Package, Plus, Receipt, Search, Settings, ShoppingBag, ShoppingCart, Sun, Users,
 } from 'lucide-react'
 import { useApp, stockOf } from '../context/AppContext'
-import { Avatar, Thumb } from './ui'
+import { Thumb } from './ui'
 import { fmtDate, money, rangeFor } from '../lib/format'
 import { inRange, summarize } from '../lib/analytics'
 
@@ -38,32 +38,24 @@ export default function Layout() {
   const onSideLeave = () => { clearTimeout(peekTimer.current); peekTimer.current = setTimeout(() => setPeek(false), 140) }
   const [mobileOpen, setMobileOpen] = useState(false)
   const [notifOpen, setNotifOpen] = useState(false)
-  const [userOpen, setUserOpen] = useState(false)
   const navigate = useNavigate()
   const { pathname } = useLocation()
   const notifRef = useRef(null)
-  const userRef = useRef(null)
 
 
   useEffect(() => {
     setMobileOpen(false)
     setPeek(false)
     setNotifOpen(false)
-    setUserOpen(false)
   }, [pathname])
 
   useEffect(() => {
     const onKey = (e) => {
       if (e.key === 'Escape') setNotifOpen(false)
     }
-    const onClick = (e) => {
-      if (userRef.current && !userRef.current.contains(e.target)) setUserOpen(false)
-    }
     window.addEventListener('keydown', onKey)
-    window.addEventListener('mousedown', onClick)
     return () => {
       window.removeEventListener('keydown', onKey)
-      window.removeEventListener('mousedown', onClick)
     }
   }, [navigate])
 
@@ -234,40 +226,19 @@ export default function Layout() {
                 {theme === 'dark' ? <Sun size={19} /> : <Moon size={19} />}
               </button>
             </div>
-            <div className="popover-wrap" ref={userRef}>
-              <button className="user-chip" onClick={() => setUserOpen((o) => !o)}>
-                <span className="user-chip__avatar">
-                  <Avatar name={user.name} size={42} />
-                  <i className="user-chip__online" />
-                </span>
-                <span className="hide-mobile">
-                  <strong>{user.name}</strong>
-                  <small>{user.role === 'admin' ? 'Administrador' : 'Cliente'} · en línea</small>
-                </span>
-              </button>
-              {userOpen && (
-                <div className="popover popover--menu">
-                  <div className="popover__user">
-                    <strong>{user.name}</strong>
-                    <span className="text-muted">{user.username}</span>
-                  </div>
-                  {isAdmin && (
-                    <button onClick={() => navigate('/configuracion')}><Settings size={16} /> Configuración</button>
-                  )}
-                  <button onClick={logout}><LogOut size={16} /> Cerrar sesión</button>
-                </div>
-              )}
-            </div>
           </div>
         </header>
         <div className="topbar-strip">
-          <div className="status-pill" title="Total facturado hoy">
+          <button type="button" className="status-pill status-pill--strip" title="Ver ventas de hoy" onClick={() => navigate('/ventas')}>
             <span className="status-pill__dot" />
             <div>
               <strong>Ventas de hoy</strong>
-              <small>{money(today.revenue)} · {today.count} {today.count === 1 ? 'venta' : 'ventas'}</small>
+              <small className="status-pill__detail">{today.count} {today.count === 1 ? 'venta' : 'ventas'} · {today.units} {today.units === 1 ? 'prenda' : 'prendas'}</small>
+              <small className="status-pill__compact">{money(today.revenue)} · {today.count} {today.count === 1 ? 'venta' : 'ventas'}</small>
             </div>
-          </div>
+            <b className="status-pill__amount">{money(today.revenue)}</b>
+            <ChevronRight size={18} className="status-pill__go" />
+          </button>
           {pending > 0 && (
             <button className="btn btn--dark" onClick={() => navigate('/ventas?estado=pendiente')}>
               <ShoppingBag size={17} /> {pending} por confirmar

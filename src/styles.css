@@ -3687,3 +3687,28 @@ html:has(.store__sheet) body, html:has(.backdrop) body, html:has(.shell--mobile-
 .form-section--toggle { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
 .form-section--toggle > div { min-width: 0; }
 .form-section--toggle .switch { flex: none; font-weight: 700; }
+
+/* "Ventas de hoy" en la franja del celular: botón con el total a la derecha */
+.status-pill--strip { display: none; cursor: pointer; text-align: left; font: inherit; color: inherit; }
+.status-pill__amount { margin-left: auto; font-size: 17px; font-weight: 800; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--soft-fg); }
+.status-pill__go { flex: none; color: var(--muted); margin-right: -4px; }
+@media (max-width: 860px) {
+  .topbar-strip .status-pill--strip { display: flex !important; gap: 10px; height: 52px !important; }
+  .topbar-strip .status-pill--strip strong { font-size: 13px; }
+  .topbar-strip .status-pill--strip:active { transform: scale(0.99); }
+  /* Con pedidos por confirmar al lado, la tarjeta se compacta */
+  .topbar-strip .btn ~ .topbar__search { order: 3; }
+  .topbar-strip:has(> .btn) .status-pill__go, .topbar-strip:has(> .btn) .status-pill--strip small { display: none; }
+  .topbar-strip:has(> .btn) .status-pill__amount { font-size: 15px; }
+  .topbar-strip .btn { height: 52px !important; }
+}
+@media (max-width: 860px) {
+  .topbar-strip .status-pill--strip { flex: 1 1 0; }
+}
+.status-pill__compact { display: none !important; }
+@media (max-width: 860px) {
+  .topbar-strip:has(> .btn) .status-pill__amount, .topbar-strip:has(> .btn) .status-pill__detail { display: none !important; }
+  .topbar-strip:has(> .btn) .status-pill__compact { display: block !important; font-weight: 700; color: var(--soft-fg); }
+  .topbar-strip .status-pill--strip > div { flex: 1; min-width: 0; }
+  .topbar-strip .status-pill--strip strong, .topbar-strip .status-pill--strip small { overflow: hidden; text-overflow: ellipsis; }
+}
