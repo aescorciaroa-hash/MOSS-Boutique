@@ -590,7 +590,7 @@ function InvoicesPage({ orders, settings, onOpen, onShop, onOrders }) {
         </div>
         {rows.length ? (
           <div className="table-wrap">
-            <table className="table table--hover">
+            <table className="table">
               <thead>
                 <tr>
                   <th>N° factura</th>
