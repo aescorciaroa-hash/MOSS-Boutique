@@ -3,6 +3,7 @@
   "short_name": "MOSS Boutique",
   "description": "MOSS Boutique · Tienda en línea y sistema de ventas",
   "start_url": "/",
+  "id": "/?app=moss-v4",
   "display": "browser",
   "background_color": "#FAFAFA",
   "theme_color": "#FAFAFA",
